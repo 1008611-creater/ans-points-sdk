@@ -32,24 +32,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "结算单权威回执；创建本身不支付。",
-            "headers": {
-              "Cache-Control": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "no-store"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ReceiptEnvelope"
-                }
-              }
-            }
-          },
           "201": {
             "description": "结算单权威回执；创建本身不支付。",
             "headers": {
@@ -130,6 +112,36 @@
           },
           "500": {
             "description": "拒绝或失败。500、408、429 与网络未知结果须保留原 reference 查询或恢复，不能证明未执行。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "请求体超过 10,000 字节，拒绝处理。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "仅接受 application/json 请求体。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "服务或接入配置暂不可用；保留原 reference，核对原单后恢复，不能证明未执行。",
             "content": {
               "application/json": {
                 "schema": {
@@ -178,24 +190,6 @@
               }
             }
           },
-          "201": {
-            "description": "结算单权威回执；创建本身不支付。",
-            "headers": {
-              "Cache-Control": {
-                "schema": {
-                  "type": "string"
-                },
-                "description": "no-store"
-              }
-            },
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ReceiptEnvelope"
-                }
-              }
-            }
-          },
           "400": {
             "description": "拒绝或失败。500、408、429 与网络未知结果须保留原 reference 查询或恢复，不能证明未执行。",
             "content": {
@@ -265,6 +259,16 @@
                 }
               }
             }
+          },
+          "503": {
+            "description": "服务或接入配置暂不可用；保留原 reference，核对原单后恢复，不能证明未执行。",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
           }
         }
       }
@@ -306,7 +310,7 @@
             "format": "uri",
             "minLength": 1,
             "maxLength": 1000,
-            "pattern": "^https://[^#]+$",
+            "pattern": "^https://(?![^/?#]*@)[^\\s#]+$",
             "description": "只能使用卖家登记的 HTTPS 返回来源，最多1000字符，无 URL 用户名、密码或 fragment。回跳不是付款证明。"
           }
         }

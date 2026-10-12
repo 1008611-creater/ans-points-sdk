@@ -45,5 +45,16 @@ test('OpenAPI input constraints match the backend tier and safe return URL contr
   assert.ok(!new RegExp(input.tierId.pattern).test('a'.repeat(61)));
   assert.equal(input.returnUrl.maxLength, 1000);
   assert.ok(!new RegExp(input.returnUrl.pattern).test('https://example.com/#paid'));
+  assert.ok(!new RegExp(input.returnUrl.pattern).test('https://user:pass@example.com/return'));
+  assert.ok(new RegExp(input.returnUrl.pattern).test('https://example.com/return?email=a@b.com'));
   assert.match(api.components.securitySchemes.MerchantBearer.description, /43/);
+});
+
+test('OpenAPI success status and bounded request errors match the real endpoints', () => {
+  const post = api.paths['/api/integrations/market/v1/checkouts'].post.responses;
+  const get = api.paths['/api/integrations/market/v1/checkouts/{id}'].get.responses;
+  assert.ok(post['201']); assert.equal(post['200'], undefined);
+  assert.ok(get['200']); assert.equal(get['201'], undefined);
+  for (const code of ['413', '415', '503']) assert.ok(post[code]);
+  assert.ok(get['503']);
 });

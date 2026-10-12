@@ -1,4 +1,4 @@
-﻿import test from 'node:test';
+import test from 'node:test';
 import assert from 'node:assert/strict';
 import { randomBytes } from 'node:crypto';
 import { createAnsPointsClient, AnsPointsError, ANS_ORIGIN } from '../src/index.js';
@@ -263,7 +263,7 @@ test('return URL boundary matches 1000 characters and forbids fragments before t
 });
 
 test('actual stable backend business codes survive safe error mapping without automatic 4xx retry', async () => {
-  for (const [status, code] of [[409, 'IDEMPOTENCY_CONFLICT'], [400, 'RETURN_ORIGIN_FORBIDDEN'], [400, 'FREE_RESOURCE'], [403, 'SERVER_ONLY'], [403, 'ACCOUNT_UNAVAILABLE'], [413, 'REQUEST_TOO_LARGE'], [409, 'INVALID_LISTING_STATE']]) {
+  for (const [status, code] of [[409, 'IDEMPOTENCY_CONFLICT'], [400, 'RETURN_ORIGIN_FORBIDDEN'], [400, 'FREE_RESOURCE'], [403, 'SERVER_ONLY'], [403, 'ACCOUNT_UNAVAILABLE'], [413, 'REQUEST_TOO_LARGE'], [409, 'INVALID_LISTING_STATE'], [409, 'WORKFLOW_RUN_REQUIRED']]) {
     let calls = 0;
     const sdk = client(async () => { calls++; return failure(status, code, key); });
     await rejectsCode(sdk.createCheckout(input, { maxAttempts: 3 }), code, false);
